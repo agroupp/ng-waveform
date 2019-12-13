@@ -1,7 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
-import { NgWaveformModule } from '../../../../dist/ng-waveform';
+import { NgWaveformModule } from 'ng-waveform';
+// import { NgWaveformModule } from '../../../../dist/ng-waveform';
 
 import { AppComponent } from './app.component';
 import { WaveformDemoComponent } from './waveform/waveform.component';
@@ -13,6 +15,7 @@ import { WaveformDemoComponent } from './waveform/waveform.component';
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     NgWaveformModule
   ],
   providers: [],

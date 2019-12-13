@@ -3,6 +3,18 @@
 Library to visualize audio waveform. Built as pure Angular library that doesn't wrap any of JS library.
 
 ## Quick start
+```typescript
+import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
+
+@ViewChild('waveform', { static: false }) waveform: NgWaveformComponent;
+
+onPlayButtonClick() {
+  this.waveform.play();
+}
+onPauseButtonClick() {
+  this.waveform.pause();
+}
+```
 
 ```html
 <ng-waveform #waveform class="waveform"

@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from '../../../../../dist/ng-waveform';
+import { FormGroup, FormControl } from '@angular/forms';
+import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
+// import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from '../../../../../dist/ng-waveform';
 
 @Component({
   selector: 'app-waveform',
@@ -10,13 +12,55 @@ export class WaveformDemoComponent implements OnInit {
   @ViewChild('waveform', { static: false }) waveform: NgWaveformComponent;
   play = false;
   isLoaded = false;
+  trackLoadTime: number;
+  renderingTime: number;
   duration: number;
   currentTime: ITimeUpdateEvent;
   regionPositions: IRegionPositions;
-  src = 'https://sapi.audioburst.com/audio/repo/play/mobile/39806809/6DrlWNAAyGzA.mp3?userId=outbrain_demo-28fc-40ff-9002-5f1e371b1c49&appName=outbrain_demo&prefix=playlist_news.foreign';
+
+  srcForm: FormGroup;
+  isSrcError = false;
+  isAudioQueried = false;
+
+  isRegionCtrl = new FormControl(true);
+  regionStartCtrl = new FormControl(0);
+  regionEndCtrl = new FormControl(0);
+
+  useRegion = true;
+  src: string;
   constructor() { }
 
   ngOnInit() {
+    this.srcForm = new FormGroup({src: new FormControl()});
+    this.srcForm.valueChanges.subscribe(() => this.isSrcError = false);
+    this.isRegionCtrl.valueChanges.subscribe(value => this.useRegion = value);
+    this.regionStartCtrl.valueChanges.subscribe(value => {
+      if (!this.waveform) {
+        return;
+      }
+      this.waveform.setRegionStart(value);
+    });
+    this.regionEndCtrl.valueChanges.subscribe(value => {
+      if (!this.waveform) {
+        return;
+      }
+      this.waveform.setRegionEnd(value);
+    });
+  }
+
+  onSrcFormSubmit() {
+    this.isAudioQueried = false;
+    const value = this.srcForm.get('src').value;
+    try {
+      const url = new URL(value);
+      if (!url) {
+        throw new Error('Bad Url');
+      }
+      this.src = value;
+      this.isAudioQueried = true;
+    } catch (err) {
+      this.isSrcError = true;
+    }
   }
 
   onPlayButtonClick() {
@@ -29,13 +73,11 @@ export class WaveformDemoComponent implements OnInit {
   }
 
   onTrackLoaded(time: number) {
-    console.log(`Track loaded in ${time}ms`);
-    this.waveform.setRegionStart(10);
-    this.waveform.setRegionEnd(40);
+    this.trackLoadTime = time;
   }
 
   onTrackRendered(time: number) {
-    console.log(`Rendering time ${time}ms`);
+    this.renderingTime = time;
     this.isLoaded = true;
   }
 
@@ -53,5 +95,7 @@ export class WaveformDemoComponent implements OnInit {
 
   onRegionChange(region: IRegionPositions) {
     this.regionPositions = region;
+    this.regionStartCtrl.setValue(this.regionPositions.start);
+    this.regionEndCtrl.setValue(this.regionPositions.end);
   }
 }

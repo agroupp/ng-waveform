@@ -1,4 +1,7 @@
-import { Component, OnChanges, AfterViewInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import {
+  Component, OnChanges, AfterViewInit, AfterViewChecked,
+  Input, ViewChild, ElementRef, Output, EventEmitter, ChangeDetectorRef
+} from '@angular/core';
 
 export interface IRegionPositions {
   start: number;
@@ -114,7 +117,7 @@ export interface IRegionPositions {
     }`
   ]
 })
-export class RegionComponent implements OnChanges, AfterViewInit {
+export class RegionComponent implements OnChanges, AfterViewInit, AfterViewChecked {
   @Input() start = 0;
   @Input() end = 0;
   @Input() duration = 0;
@@ -131,9 +134,15 @@ export class RegionComponent implements OnChanges, AfterViewInit {
   @ViewChild('wrapper', {static: false}) private wrapperEl: ElementRef;
   private wrapper: HTMLDivElement;
 
+  constructor(private cd: ChangeDetectorRef) {}
+
   ngAfterViewInit() {
     this.wrapper = this.wrapperEl.nativeElement as HTMLDivElement;
     this.init();
+  }
+
+  ngAfterViewChecked() {
+    this.cd.detectChanges();
   }
 
   ngOnChanges() {

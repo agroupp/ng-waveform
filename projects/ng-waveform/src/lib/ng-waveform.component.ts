@@ -210,7 +210,10 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * Change start position of region
    * @param time time in seconds
    */
-  setRegionStart(time: number) {
+  setRegionStart(time: number): void {
+    if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.start) {
+      return;
+    }
     this._regionSubj.next({start: time, end: this._region.end});
   }
 
@@ -218,7 +221,10 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * Change end position of region
    * @param time time in seconds
    */
-  setRegionEnd(time: number) {
+  setRegionEnd(time: number): void {
+    if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.end) {
+      return;
+    }
     this._regionSubj.next({start: this._region.start, end: time});
   }
 

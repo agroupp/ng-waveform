@@ -1,37 +1,72 @@
-<div class="waveform">
-  <ng-waveform #waveform class="waveform"
-    [src]="src"
-    [height]="150"
-    [useRegion]="true"
-    regionBackgroundColor="rgba(255, 255, 255, 0.7)"
-    regionStartStickColor="#21f032"
-    regionEndStickColor="red"
-    regionTextColor="#09417e"
-    [withRegionLabels]="true"
-    waveColor="#ff11ff"
-    (trackLoaded)="onTrackLoaded($event)"
-    (rendered)="onTrackRendered($event)"
-    (durationChange)="onDurationChange($event)"
-    (timeUpdate)="onTimeUpdate($event)"
-    (paused)="onPaused()"
-    (regionChange)="onRegionChange($event)"
-  >
-  </ng-waveform>
-</div>
-<div>
-  <button (click)="onPlayButtonClick()" *ngIf="!play">Play</button>
-  <button (click)="onPauseButtonClick()" *ngIf="play">Pause</button>
-</div>
-<div>
-  <!--<audio controls src="https://sapi.audioburst.com/audio/repo/play/mobile/39806809/6DrlWNAAyGzA.mp3?userId=outbrain_demo-28fc-40ff-9002-5f1e371b1c49&appName=outbrain_demo&prefix=playlist_news.foreign"></audio>-->
-</div>
-<div class="telemetry" *ngIf="isLoaded">
-  <p>Time: {{currentTime?.time | number}}</p>
-  <p>Duration: {{duration}}</p>
-  <p>Progress: {{currentTime?.progress | number}}%</p>
-  <div class="region">
-    <p>Region:</p>
-    <p>Start: {{regionPositions?.start}}</p>
-    <p>End: {{regionPositions?.end}}</p>
+<section class="section">
+  <div class="container">
+    <h1>Demo page of NgWaveform Angular component</h1>
   </div>
-</div>
+</section>
+<section class="section">
+  <div class="container">
+    <form [formGroup]="srcForm" class="src-form" novalidate (ngSubmit)="onSrcFormSubmit()">
+      <div class="form-row">
+        <input type="url" formControlName="src" placeholder="Type here Url of your mp3 file" />
+        <button type="submit">Go!</button>
+      </div>
+      <div class="error-row" *ngIf="isSrcError">Invalid URL was entered</div>
+    </form>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="loader" *ngIf="isAudioQueried && !isLoaded"><p>Loading...</p></div>
+    <ng-waveform #waveform
+      [src]="src"
+      [height]="150"
+      [useRegion]="useRegion"
+      regionBackgroundColor="rgba(255, 255, 255, 0.7)"
+      regionStartStickColor="#21f032"
+      regionEndStickColor="red"
+      regionTextColor="#09417e"
+      [withRegionLabels]="true"
+      waveColor="#ff11ff"
+      (trackLoaded)="onTrackLoaded($event)"
+      (rendered)="onTrackRendered($event)"
+      (durationChange)="onDurationChange($event)"
+      (timeUpdate)="onTimeUpdate($event)"
+      (paused)="onPaused()"
+      (regionChange)="onRegionChange($event)"
+    >
+    </ng-waveform>
+  </div>
+</section>
+<section class="section">
+  <div class="controls" *ngIf="isLoaded">
+    <button (click)="onPlayButtonClick()" *ngIf="!play">Play</button>
+    <button (click)="onPauseButtonClick()" *ngIf="play">Pause</button>
+  </div>
+</section>
+<section class="section" *ngIf="isLoaded">
+  <div class="container">
+    <div class="telemetry">
+      <h2>Telemetry</h2>
+      <p><span class="label">Time to load track:</span><span class="value">{{trackLoadTime}}</span>ms</p>
+      <p><span class="label">Time to render wave:</span><span class="value">{{renderingTime}}</span>ms</p>
+      <p><span class="label">Duration:</span><span class="value">{{duration | number: '1.2-2'}}</span>s</p>
+      <p><span class="label">Current time:</span><span class="value">{{currentTime?.time | number: '1.2-2'}}</span>s</p>
+      <p><span class="label">Progress:</span><span class="value">{{currentTime?.progress | number: '1.2-2'}}</span>%</p>
+    </div>
+    <div class="region-controls">
+      <h2>Region control</h2>
+      <div class="form-row">
+        <label>
+          <input type="checkbox" [formControl]="isRegionCtrl">
+          Turn region off
+        </label>
+      </div>
+      <ng-container *ngIf="useRegion">
+        <label for="region-start">Start</label>
+        <input type="number" id="region-start" min="0" [max]="duration" [formControl]="regionStartCtrl">
+        <label for="region-end">End</label>
+        <input type="number" id="region-end" min="0" [max]="duration" [formControl]="regionEndCtrl">
+      </ng-container>
+    </div>
+  </div>
+</section>
