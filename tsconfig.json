@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ng-waveform": [
+        "dist/ng-waveform"
+      ],
+      "ng-waveform/*": [
+        "dist/ng-waveform/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

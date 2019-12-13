@@ -2,5 +2,163 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "ng-waveform": {
+      "projectType": "library",
+      "root": "projects/ng-waveform",
+      "sourceRoot": "projects/ng-waveform/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-waveform/tsconfig.lib.json",
+            "project": "projects/ng-waveform/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ng-waveform/src/test.ts",
+            "tsConfig": "projects/ng-waveform/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-waveform/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-waveform/tsconfig.lib.json",
+              "projects/ng-waveform/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "waveform-demo": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/waveform-demo",
+      "sourceRoot": "projects/waveform-demo/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/waveform-demo",
+            "index": "projects/waveform-demo/src/index.html",
+            "main": "projects/waveform-demo/src/main.ts",
+            "polyfills": "projects/waveform-demo/src/polyfills.ts",
+            "tsConfig": "projects/waveform-demo/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "projects/waveform-demo/src/favicon.ico",
+              "projects/waveform-demo/src/assets"
+            ],
+            "styles": [
+              "projects/waveform-demo/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/waveform-demo/src/environments/environment.ts",
+                  "with": "projects/waveform-demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "waveform-demo:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "waveform-demo:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "waveform-demo:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/waveform-demo/src/test.ts",
+            "polyfills": "projects/waveform-demo/src/polyfills.ts",
+            "tsConfig": "projects/waveform-demo/tsconfig.spec.json",
+            "karmaConfig": "projects/waveform-demo/karma.conf.js",
+            "assets": [
+              "projects/waveform-demo/src/favicon.ico",
+              "projects/waveform-demo/src/assets"
+            ],
+            "styles": [
+              "projects/waveform-demo/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/waveform-demo/tsconfig.app.json",
+              "projects/waveform-demo/tsconfig.spec.json",
+              "projects/waveform-demo/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/waveform-demo/e2e/protractor.conf.js",
+            "devServerTarget": "waveform-demo:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "waveform-demo:serve:production"
+            }
+          }
+        }
+      }
+    }},
+  "defaultProject": "ng-waveform"
 }

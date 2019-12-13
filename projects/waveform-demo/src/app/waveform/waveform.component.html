@@ -1,0 +1,37 @@
+<div class="waveform">
+  <ng-waveform #waveform class="waveform"
+    [src]="src"
+    [height]="150"
+    [useRegion]="true"
+    regionBackgroundColor="rgba(255, 255, 255, 0.7)"
+    regionStartStickColor="#21f032"
+    regionEndStickColor="red"
+    regionTextColor="#09417e"
+    [withRegionLabels]="true"
+    waveColor="#ff11ff"
+    (trackLoaded)="onTrackLoaded($event)"
+    (rendered)="onTrackRendered($event)"
+    (durationChange)="onDurationChange($event)"
+    (timeUpdate)="onTimeUpdate($event)"
+    (paused)="onPaused()"
+    (regionChange)="onRegionChange($event)"
+  >
+  </ng-waveform>
+</div>
+<div>
+  <button (click)="onPlayButtonClick()" *ngIf="!play">Play</button>
+  <button (click)="onPauseButtonClick()" *ngIf="play">Pause</button>
+</div>
+<div>
+  <!--<audio controls src="https://sapi.audioburst.com/audio/repo/play/mobile/39806809/6DrlWNAAyGzA.mp3?userId=outbrain_demo-28fc-40ff-9002-5f1e371b1c49&appName=outbrain_demo&prefix=playlist_news.foreign"></audio>-->
+</div>
+<div class="telemetry" *ngIf="isLoaded">
+  <p>Time: {{currentTime?.time | number}}</p>
+  <p>Duration: {{duration}}</p>
+  <p>Progress: {{currentTime?.progress | number}}%</p>
+  <div class="region">
+    <p>Region:</p>
+    <p>Start: {{regionPositions?.start}}</p>
+    <p>End: {{regionPositions?.end}}</p>
+  </div>
+</div>
