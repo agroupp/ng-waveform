@@ -1,10 +1,17 @@
 <section class="section">
   <div class="container">
     <h1>Demo page of NgWaveform Angular component</h1>
+    <h2>With NgWaveform you can create interactive customisable waveform of any audio file in your Angular application.</h2>
   </div>
 </section>
 <section class="section">
   <div class="container">
+    <div class="default-audio">
+      <button (click)="downloadABTopStory()">Download Audioburst top story</button>
+    </div>
+    <div class="divider">
+      or
+    </div>
     <form [formGroup]="srcForm" class="src-form" novalidate (ngSubmit)="onSrcFormSubmit()">
       <div class="form-row">
         <input type="url" formControlName="src" placeholder="Type here Url of your mp3 file" />
@@ -17,7 +24,7 @@
 <section class="section">
   <div class="container">
     <div class="loader" *ngIf="isAudioQueried && !isLoaded"><p>Loading...</p></div>
-    <ng-waveform #waveform
+    <ng-waveform #waveform *ngIf="isAudioQueried"
       [src]="src"
       [height]="150"
       [useRegion]="useRegion"
@@ -39,14 +46,22 @@
 </section>
 <section class="section">
   <div class="controls" *ngIf="isLoaded">
-    <button (click)="onPlayButtonClick()" *ngIf="!play">Play</button>
-    <button (click)="onPauseButtonClick()" *ngIf="play">Pause</button>
+    <button (click)="onPlayButtonClick()" *ngIf="!play" class="icon-button">
+      <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+        <path fill="#000000" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+      </svg>
+    </button>
+    <button (click)="onPauseButtonClick()" *ngIf="play" class="icon-button">
+      <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+        <path fill="#000000" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
+      </svg>
+    </button>
   </div>
 </section>
 <section class="section" *ngIf="isLoaded">
   <div class="container">
     <div class="telemetry">
-      <h2>Telemetry</h2>
+      <h3>Telemetry</h3>
       <p><span class="label">Time to load track:</span><span class="value">{{trackLoadTime}}</span>ms</p>
       <p><span class="label">Time to render wave:</span><span class="value">{{renderingTime}}</span>ms</p>
       <p><span class="label">Duration:</span><span class="value">{{duration | number: '1.2-2'}}</span>s</p>
@@ -54,7 +69,7 @@
       <p><span class="label">Progress:</span><span class="value">{{currentTime?.progress | number: '1.2-2'}}</span>%</p>
     </div>
     <div class="region-controls">
-      <h2>Region control</h2>
+      <h3>Region control</h3>
       <div class="form-row">
         <label>
           <input type="checkbox" [formControl]="isRegionCtrl">

@@ -1,8 +1,12 @@
 # NgAudio
 
-Library to visualize audio waveform. Built as pure Angular library that doesn't wrap any of JS library.
+Library to visualize audio waveform. Built as pure Angular library that doesn't wrap any of JS library. With NgWaveform you can create interactive customisable waveform of any audio file in your Angular application.
 
 ## Quick start
+```bash
+npm install --save ng-waveform
+```
+
 ```typescript
 import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
 

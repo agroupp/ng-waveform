@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
 // import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from '../../../../../dist/ng-waveform';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-waveform',
@@ -28,7 +30,7 @@ export class WaveformDemoComponent implements OnInit {
 
   useRegion = true;
   src: string;
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.srcForm = new FormGroup({src: new FormControl()});
@@ -50,6 +52,10 @@ export class WaveformDemoComponent implements OnInit {
 
   onSrcFormSubmit() {
     this.isAudioQueried = false;
+    this.isLoaded = false;
+    this.play = false;
+    this.regionStartCtrl.setValue(0);
+    this.regionEndCtrl.setValue(0);
     const value = this.srcForm.get('src').value;
     try {
       const url = new URL(value);
@@ -97,5 +103,22 @@ export class WaveformDemoComponent implements OnInit {
     this.regionPositions = region;
     this.regionStartCtrl.setValue(this.regionPositions.start);
     this.regionEndCtrl.setValue(this.regionPositions.end);
+  }
+
+  downloadABTopStory() {
+    this.isLoaded = false;
+    this.isAudioQueried = false;
+    this.play = false;
+    this.regionStartCtrl.setValue(0);
+    this.regionEndCtrl.setValue(0);
+    const params = new HttpParams().set('appKey', '5e32a885cd5244d39e88e0f1480ee45b');
+    this.http.get<{bursts: any[]}>(`https://sapi.audioburst.com/v2/topstories`, {params}).pipe(
+      map(resp => resp.bursts[0]),
+      map(b => b.contentURLs.audioURL)
+    )
+    .subscribe(src => {
+      this.src = src;
+      this.isAudioQueried = true;
+    });
   }
 }

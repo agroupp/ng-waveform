@@ -26,7 +26,7 @@ export interface ITimeUpdateEvent {
     >
       <canvas [hidden]="!loaded" #canvasEl [ngStyle]="{'backgroundColor': backgroundColor}"></canvas>
       <div #overlayEl class="ng-waveform-overlay" [ngStyle]="{'backgroundColor': overlayBackgroundColor, 'width.%': progress}"></div>
-      <ng-waveform-region *ngIf="useRegion"
+      <ng-waveform-region *ngIf="useRegion && loaded"
         [start]="region.start" [end]="region.end" [duration]="duration"
         [regionBackgroundColor]="regionBackgroundColor"
         [startStickColor]="regionStartStickColor"
@@ -269,6 +269,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private loadAudio() {
     this._currentTime = 0;
     this._savedCurrentTime = 0;
+    this._regionSubj.next({start: 0, end: 0});
     this._loaded = false;
     const audioBuffer$ = this.service.loadTrack(this.srcUrl).pipe(
       switchMap(buff => this.decode(buff))
@@ -335,6 +336,8 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   }
 
   ngOnDestroy() {
-    this.audioCtxSource.stop();
+    if (this.audioCtxSource) {
+      this.audioCtxSource.stop();
+    }
   }
 }
