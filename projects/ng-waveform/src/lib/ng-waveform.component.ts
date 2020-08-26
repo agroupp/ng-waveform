@@ -292,7 +292,17 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * @param buffer Raw data from mp3
    */
   private decode(buffer: ArrayBuffer) {
-    return from(this.audioCtx.decodeAudioData(buffer));
+    return from(
+      this.audioCtx.decodeAudioData(
+        buffer, 
+        (decodedBuffer) => {
+          console.log('Audio Decoded.', decodedBuffer);
+        },
+        (error) => {
+          console.log('Error decoding audio.', error);
+        }
+      )
+    );
   }
 
   /**
