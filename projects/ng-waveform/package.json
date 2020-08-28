@@ -1,6 +1,6 @@
 {
   "name": "ng-waveform",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "peerDependencies": {
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14"
