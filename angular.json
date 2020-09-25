@@ -15,7 +15,12 @@
             "tsConfig": "projects/ng-waveform/tsconfig.lib.json",
             "project": "projects/ng-waveform/ng-package.json"
           }
-        },
+        ,          "configurations": {
+            "production": {
+              "tsConfig": "projects/ng-waveform/tsconfig.lib.prod.json"
+            }
+          }
+},
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -57,7 +62,7 @@
             "main": "projects/waveform-demo/src/main.ts",
             "polyfills": "projects/waveform-demo/src/polyfills.ts",
             "tsConfig": "projects/waveform-demo/tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "projects/waveform-demo/src/favicon.ico",
               "projects/waveform-demo/src/assets"
@@ -80,7 +85,6 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
