@@ -71,7 +71,9 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
 
   private audioCtx: AudioContext;
   private audioCtxSource: AudioBufferSourceNode;
-  private audioBuffer: AudioBuffer;
+
+  // The audioBuffer objects appear differently on Safari vs Chrome hence the use of any
+  private audioBuffer: any; 
 
   private canvasCtx: CanvasRenderingContext2D;
   @ViewChild('wrapperEl', {static: false}) private wrapperEl: ElementRef;
@@ -175,6 +177,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     try {
       this.setAudioSource();
       const startPoint = start ? start : this._savedCurrentTime;
+      this.setAudioSource();
       this.audioCtxSource.start(0, startPoint);
       this.audioCtxSource.connect(this.audioCtx.destination);
       this._isPlayingSubj.next(true);
@@ -253,7 +256,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     this._savedCurrentTime = time;
     const isPlaying = this._isPlaying;
     this._isPlayingSubj.next(false);
-    if (this.audioCtxSource) {
+    if (this.audioCtxSource && isPlaying ) {
       this.audioCtxSource.stop();
     }
     this._progress = this._savedCurrentTime / this._duration * 100;
@@ -292,18 +295,11 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * @param buffer Raw data from mp3
    */
   private decode(buffer: ArrayBuffer) {
-    return from(
-      this.audioCtx.decodeAudioData(
-        buffer, 
-        (decodedBuffer) => {
-          console.log('Audio Decoded.', decodedBuffer);
-        },
-        (error) => {
-          console.log('Error decoding audio.', error);
-        }
-      )
-    );
-  }
+    return new Promise(
+      (resolve, reject) => {
+        this.audioCtx.decodeAudioData(buffer, (decodedBuffer) => { resolve(decodedBuffer) })
+      })
+    }
 
   /**
    * Set Audio context source used to play audio
