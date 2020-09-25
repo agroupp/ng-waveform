@@ -1,20 +1,20 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WaveformComponent } from './waveform.component';
+import { WaveformDemoComponent } from './waveform.component';
 
-describe('WaveformComponent', () => {
-  let component: WaveformComponent;
-  let fixture: ComponentFixture<WaveformComponent>;
+describe('WaveformDemoComponent', () => {
+  let component: WaveformDemoComponent;
+  let fixture: ComponentFixture<WaveformDemoComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ WaveformComponent ]
+      declarations: [ WaveformDemoComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WaveformComponent);
+    fixture = TestBed.createComponent(WaveformDemoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
