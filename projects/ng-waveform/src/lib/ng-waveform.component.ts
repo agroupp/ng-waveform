@@ -117,15 +117,20 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
       ),
       switchMap(() => of(this.audioCtx.currentTime - this._audioContextStartTime + this._savedCurrentTime)),
     )
-    .subscribe(time => {
-      this._progress = time / this._duration * 100;
-      this.timeUpdate.emit({ time, progress: this._progress });
-      this._currentTime = time;
-      if (this.useRegion && this._stopAtRegionEnd && time > this.region.end) {
-        this.pause();
-        this._stopAtRegionEnd = false;
-      }
-    });
+      .subscribe(time => {
+        this._progress = time / this._duration * 100;
+        this.timeUpdate.emit({ time, progress: this._progress });
+        this._currentTime = time;
+        if (this.useRegion) {
+          if (this._stopAtRegionEnd && time > this.region.end) {
+            this.pause();
+            this._stopAtRegionEnd = false;
+          }
+        }
+        if (this._progress > 100) {
+          this.pause();
+        }
+      });
 
     this._durationSubj.asObservable().subscribe(duration => {
       this._duration = duration;
