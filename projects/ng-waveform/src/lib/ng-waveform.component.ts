@@ -74,9 +74,9 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private audioBuffer: AudioBuffer;
 
   private canvasCtx: CanvasRenderingContext2D;
-  @ViewChild('wrapperEl', {static: false}) private wrapperEl: ElementRef;
-  @ViewChild('canvasEl', {static: false}) private canvasEl: ElementRef;
-  @ViewChild('overlayEl', {static: false}) private overlayEl: ElementRef;
+  @ViewChild('wrapperEl') private wrapperEl: ElementRef;
+  @ViewChild('canvasEl') private canvasEl: ElementRef;
+  @ViewChild('overlayEl') private overlayEl: ElementRef;
   private wrapper: HTMLDivElement;
   private canvas: HTMLCanvasElement;
   private overlay: HTMLDivElement;
@@ -294,7 +294,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private decode(buffer: ArrayBuffer) {
     return from(
       this.audioCtx.decodeAudioData(
-        buffer, 
+        buffer,
         (decodedBuffer) => {
           console.log('Audio Decoded.', decodedBuffer);
         },

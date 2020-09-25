@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
-// import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from '../../../../../dist/ng-waveform';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -11,7 +10,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./waveform.component.scss']
 })
 export class WaveformDemoComponent implements OnInit {
-  @ViewChild('waveform', { static: false }) waveform: NgWaveformComponent;
+  @ViewChild('waveform') waveform: NgWaveformComponent;
   play = false;
   isLoaded = false;
   trackLoadTime: number;

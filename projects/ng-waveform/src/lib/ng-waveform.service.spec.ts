@@ -6,7 +6,7 @@ describe('NgWaveformService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: NgWaveformService = TestBed.get(NgWaveformService);
+    const service: NgWaveformService = TestBed.inject(NgWaveformService);
     expect(service).toBeTruthy();
   });
 });
