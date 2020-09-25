@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./waveform.component.scss']
 })
 export class WaveformDemoComponent implements OnInit {
-  @ViewChild('waveform', { static: false }) waveform: NgWaveformComponent;
+  @ViewChild('waveform') waveform: NgWaveformComponent;
   play = false;
   isLoaded = false;
   trackLoadTime: number;
