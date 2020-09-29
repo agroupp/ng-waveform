@@ -117,15 +117,21 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
       ),
       switchMap(() => of(this.audioCtx.currentTime - this._audioContextStartTime + this._savedCurrentTime)),
     )
-    .subscribe(time => {
-      this._progress = time / this._duration * 100;
-      this.timeUpdate.emit({ time, progress: this._progress });
-      this._currentTime = time;
-      if (this.useRegion && this._stopAtRegionEnd && time > this.region.end) {
-        this.pause();
-        this._stopAtRegionEnd = false;
-      }
-    });
+      .subscribe(time => {
+        this._progress = time / this._duration * 100;
+        this.timeUpdate.emit({ time, progress: this._progress });
+        this._currentTime = time;
+        if (this.useRegion) {
+          if (this._stopAtRegionEnd && time > this.region.end) {
+            this.pause();
+            this._stopAtRegionEnd = false;
+          }
+        }
+        if (this._progress > 100) {
+          this.pause();
+          this.setCurrentTime(this.startPosition);
+        }
+      });
 
     this._durationSubj.asObservable().subscribe(duration => {
       this._duration = duration;
@@ -162,6 +168,15 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
       this.srcUrl = this.src;
       this.loadAudio();
     }
+  }
+
+ /**
+   * Gets the time which playback should begin from
+   * Either the start of the region, or 0
+   * @returns start position
+   */
+  private get startPosition(): number {
+    return this.useRegion ? this.region.start : 0;
   }
 
   /**
