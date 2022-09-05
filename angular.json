@@ -10,30 +10,23 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/ng-waveform/tsconfig.lib.json",
             "project": "projects/ng-waveform/ng-package.json"
           }
-        },
+        ,          "configurations": {
+            "production": {
+              "tsConfig": "projects/ng-waveform/tsconfig.lib.prod.json"
+            }
+          }
+},
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "projects/ng-waveform/src/test.ts",
             "tsConfig": "projects/ng-waveform/tsconfig.spec.json",
             "karmaConfig": "projects/ng-waveform/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/ng-waveform/tsconfig.lib.json",
-              "projects/ng-waveform/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -57,7 +50,6 @@
             "main": "projects/waveform-demo/src/main.ts",
             "polyfills": "projects/waveform-demo/src/polyfills.ts",
             "tsConfig": "projects/waveform-demo/tsconfig.app.json",
-            "aot": false,
             "assets": [
               "projects/waveform-demo/src/favicon.ico",
               "projects/waveform-demo/src/assets"
@@ -65,7 +57,13 @@
             "styles": [
               "projects/waveform-demo/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -78,9 +76,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -97,7 +93,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -133,19 +130,6 @@
             "scripts": []
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/waveform-demo/tsconfig.app.json",
-              "projects/waveform-demo/tsconfig.spec.json",
-              "projects/waveform-demo/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
@@ -159,6 +143,6 @@
           }
         }
       }
-    }},
-  "defaultProject": "ng-waveform"
+    }
+  }
 }
