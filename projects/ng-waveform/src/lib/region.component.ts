@@ -131,7 +131,7 @@ export class RegionComponent implements OnChanges, AfterViewInit, AfterViewCheck
   /** Emits when region length changes */
   @Output() valueChanges = new EventEmitter<IRegionPositions>();
 
-  @ViewChild('wrapper', {static: false}) private wrapperEl: ElementRef;
+  @ViewChild('wrapper') private wrapperEl: ElementRef;
   private wrapper: HTMLDivElement;
 
   constructor(private cd: ChangeDetectorRef) {}
