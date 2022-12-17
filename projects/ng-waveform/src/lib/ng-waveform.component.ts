@@ -1,64 +1,100 @@
 import {
-  Component, OnInit, OnChanges, OnDestroy, AfterViewInit,
-  Input, ViewChild, ElementRef, Output, EventEmitter
-} from '@angular/core';
-import { from, interval, BehaviorSubject, of } from 'rxjs';
-import { switchMap, tap, takeWhile, takeUntil } from 'rxjs/operators';
+  Component,
+  OnInit,
+  OnChanges,
+  OnDestroy,
+  AfterViewInit,
+  Input,
+  ViewChild,
+  ElementRef,
+  Output,
+  EventEmitter,
+  SimpleChanges,
+} from "@angular/core";
+import { from, interval, BehaviorSubject, of } from "rxjs";
+import { switchMap, tap, takeWhile, takeUntil } from "rxjs/operators";
 
-import { NgWaveformService } from './ng-waveform.service';
-import { IRegionPositions } from './region.component';
+import { NgWaveformService } from "./ng-waveform.service";
+import { IRegionPositions } from "./region.component";
 
 export interface ITimeUpdateEvent {
   time: number;
   progress: number;
 }
 
+export interface Marker {
+  time: number;
+  label: string;
+}
+
 @Component({
-  selector: 'ng-waveform',
-  template: `
-    <div #wrapperEl
+  selector: "ng-waveform",
+  template: ` <div
+    #wrapperEl
+    [ngStyle]="{
+      'width.%': 100,
+      position: 'relative',
+      'height.px': height,
+      'margin-bottom.px': useRegion && withRegionLabels ? 24 : 0
+    }"
+    (click)="onWrapperClick($event)"
+  >
+    <canvas
+      [hidden]="!loaded"
+      #canvasEl
+      [ngStyle]="{ backgroundColor: backgroundColor }"
+    ></canvas>
+    <div
+      #overlayEl
+      class="ng-waveform-overlay"
       [ngStyle]="{
-        'width.%': 100, 'position': 'relative',
-        'height.px': height,
-        'margin-bottom.px': useRegion && withRegionLabels ? 24 : 0
+        backgroundColor: overlayBackgroundColor,
+        'width.%': progress
       }"
-      (click)="onWrapperClick($event)"
-    >
-      <canvas [hidden]="!loaded" #canvasEl [ngStyle]="{'backgroundColor': backgroundColor}"></canvas>
-      <div #overlayEl class="ng-waveform-overlay" [ngStyle]="{'backgroundColor': overlayBackgroundColor, 'width.%': progress}"></div>
-      <ng-waveform-region *ngIf="useRegion && loaded"
-        [start]="region.start" [end]="region.end" [duration]="duration"
-        [regionBackgroundColor]="regionBackgroundColor"
-        [startStickColor]="regionStartStickColor"
-        [endStickColor]="regionEndStickColor"
-        [regionTextColor]="regionTextColor"
-        [withLabels]="withRegionLabels"
-        (valueChanges)="onRegionChange($event)"></ng-waveform-region>
-    </div>`,
+    ></div>
+    <ng-waveform-region
+      *ngIf="useRegion && loaded"
+      [start]="region.start"
+      [end]="region.end"
+      [duration]="duration"
+      [regionBackgroundColor]="regionBackgroundColor"
+      [startStickColor]="regionStartStickColor"
+      [endStickColor]="regionEndStickColor"
+      [regionTextColor]="regionTextColor"
+      [withLabels]="withRegionLabels"
+      (valueChanges)="onRegionChange($event)"
+    ></ng-waveform-region>
+  </div>`,
   styles: [
-    `.ng-waveform-overlay {
-      position:absolute;
-      top:0;
-      bottom:0;
-      left:0;
-      pointer-events:none;
-      transition:100ms linear width;
-    }`
-  ]
+    `
+      .ng-waveform-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+        transition: 100ms linear width;
+      }
+    `,
+  ],
 })
-export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+export class NgWaveformComponent
+  implements OnInit, OnChanges, OnDestroy, AfterViewInit
+{
   @Input() src: string;
   @Input() height = 100;
-  @Input() waveColor = '#d3d3d3';
-  @Input() backgroundColor = 'transparent';
-  @Input() overlayBackgroundColor = 'rgba(0, 0, 0, 0.5)';
-  @Input() regionBackgroundColor = 'transparent';
-  @Input() regionStartStickColor = 'red';
-  @Input() regionEndStickColor = 'red';
-  @Input() regionTextColor = '#000';
+  @Input() waveColor = "#d3d3d3";
+  @Input() backgroundColor = "transparent";
+  @Input() overlayBackgroundColor = "rgba(0, 0, 0, 0.5)";
+  @Input() regionBackgroundColor = "transparent";
+  @Input() regionStartStickColor = "red";
+  @Input() regionEndStickColor = "red";
+  @Input() regionTextColor = "#000";
+  @Input() markerColor = "#096";
   @Input() useRegion = false;
   @Input() withRegionLabels = true;
   @Input() autoplay = false;
+  @Input() markers: Marker[] | undefined = [];
 
   @Output() trackLoaded = new EventEmitter<number>();
   @Output() rendered = new EventEmitter<number>();
@@ -73,12 +109,12 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private audioCtxSource: AudioBufferSourceNode;
 
   // The audioBuffer objects appear differently on Safari vs Chrome hence the use of any
-  private audioBuffer: any; 
+  private audioBuffer: any;
 
   private canvasCtx: CanvasRenderingContext2D;
-  @ViewChild('wrapperEl', {static: false}) private wrapperEl: ElementRef;
-  @ViewChild('canvasEl', {static: false}) private canvasEl: ElementRef;
-  @ViewChild('overlayEl', {static: false}) private overlayEl: ElementRef;
+  @ViewChild("wrapperEl", { static: false }) private wrapperEl: ElementRef;
+  @ViewChild("canvasEl", { static: false }) private canvasEl: ElementRef;
+  @ViewChild("overlayEl", { static: false }) private overlayEl: ElementRef;
   private wrapper: HTMLDivElement;
   private canvas: HTMLCanvasElement;
   private overlay: HTMLDivElement;
@@ -94,33 +130,53 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private _audioContextStartTime = 0;
   private _progress = 0;
   private _loaded = false;
-  private _regionSubj = new BehaviorSubject<IRegionPositions>({start: 0, end: 0});
+  private _regionSubj = new BehaviorSubject<IRegionPositions>({
+    start: 0,
+    end: 0,
+  });
   private _region: IRegionPositions;
   private _stopAtRegionEnd = false;
   // tslint:enable: variable-name
 
-  get region() { return this._region; }
-  get progress() { return this._progress; }
-  get loaded() { return this._loaded; }
-  get duration() { return this._duration; }
+  get region() {
+    return this._region;
+  }
+  get progress() {
+    return this._progress;
+  }
+  get loaded() {
+    return this._loaded;
+  }
+  get duration() {
+    return this._duration;
+  }
 
-  constructor(private service: NgWaveformService) { }
+  constructor(private service: NgWaveformService) {}
 
   ngOnInit() {
     // tslint:disable-next-line:no-string-literal
-    const AudioContext = window['AudioContext'] || window['webkitAudioContext'];
+    const AudioContext = window["AudioContext"] || window["webkitAudioContext"];
     this.audioCtx = new AudioContext();
 
-    this._isPlaying$.pipe(
-      tap(isPlaying => this._isPlaying = isPlaying),
-      switchMap(isPlaying => interval(80).pipe(
-        tap(t => this.setAudioCtxStartTime(t)),
-        takeWhile(() => isPlaying))
-      ),
-      switchMap(() => of(this.audioCtx.currentTime - this._audioContextStartTime + this._savedCurrentTime)),
-    )
-      .subscribe(time => {
-        this._progress = time / this._duration * 100;
+    this._isPlaying$
+      .pipe(
+        tap((isPlaying) => (this._isPlaying = isPlaying)),
+        switchMap((isPlaying) =>
+          interval(80).pipe(
+            tap((t) => this.setAudioCtxStartTime(t)),
+            takeWhile(() => isPlaying)
+          )
+        ),
+        switchMap(() =>
+          of(
+            this.audioCtx.currentTime -
+              this._audioContextStartTime +
+              this._savedCurrentTime
+          )
+        )
+      )
+      .subscribe((time) => {
+        this._progress = (time / this._duration) * 100;
         this.timeUpdate.emit({ time, progress: this._progress });
         this._currentTime = time;
         if (this.useRegion) {
@@ -135,18 +191,20 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
         }
       });
 
-    this._durationSubj.asObservable().subscribe(duration => {
+    this._durationSubj.asObservable().subscribe((duration) => {
       this._duration = duration;
       /* Set initial region */
       if (this.useRegion) {
-        const start = this._region && this._region.start ? this._region.start : 0;
-        const end = this._region && this._region.end ? this._region.end : this._duration;
+        const start =
+          this._region && this._region.start ? this._region.start : 0;
+        const end =
+          this._region && this._region.end ? this._region.end : this._duration;
         this._regionSubj.next({ start, end });
       }
       this.durationChange.emit(this._duration);
     });
 
-    this._regionSubj.asObservable().subscribe(region => {
+    this._regionSubj.asObservable().subscribe((region) => {
       this._region = region;
       this.setCurrentTime(this._region.start);
       this.regionChange.emit(this._region);
@@ -155,14 +213,14 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
 
   ngAfterViewInit() {
     this.canvas = this.canvasEl.nativeElement as HTMLCanvasElement;
-    this.canvasCtx = this.canvas.getContext('2d');
+    this.canvasCtx = this.canvas.getContext("2d");
     const dpr = window.devicePixelRatio || 1;
     this.canvasCtx.scale(dpr, dpr);
     this.wrapper = this.wrapperEl.nativeElement as HTMLDivElement;
     this.overlay = this.overlayEl.nativeElement as HTMLDivElement;
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     if (!this.src) {
       return;
     }
@@ -170,9 +228,13 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
       this.srcUrl = this.src;
       this.loadAudio();
     }
+
+    if (changes['markers']?.currentValue && this._loaded == true) {
+      this.render();
+    }
   }
 
- /**
+  /**
    * Gets the time which playback should begin from
    * Either the start of the region, or 0
    * @returns start position
@@ -229,10 +291,16 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * @param time time in seconds
    */
   setRegionStart(time: number): void {
-    if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.start) {
+    if (
+      time == null ||
+      isNaN(time) ||
+      time < 0 ||
+      time > this._duration ||
+      time === this._region.start
+    ) {
       return;
     }
-    this._regionSubj.next({start: time, end: this._region.end});
+    this._regionSubj.next({ start: time, end: this._region.end });
   }
 
   /**
@@ -240,10 +308,16 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * @param time time in seconds
    */
   setRegionEnd(time: number): void {
-    if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.end) {
+    if (
+      time == null ||
+      isNaN(time) ||
+      time < 0 ||
+      time > this._duration ||
+      time === this._region.end
+    ) {
       return;
     }
-    this._regionSubj.next({start: this._region.start, end: time});
+    this._regionSubj.next({ start: this._region.start, end: time });
   }
 
   onWrapperClick(event: MouseEvent): void {
@@ -254,7 +328,10 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     const x = event.x - wrapperRect.left;
     const time = this._duration * (x / wrapperRect.width);
     const ROUND_MULTIPLIER = 10000000;
-    if (Math.round(time * ROUND_MULTIPLIER) !== Math.round(this.region.end * ROUND_MULTIPLIER)) {
+    if (
+      Math.round(time * ROUND_MULTIPLIER) !==
+      Math.round(this.region.end * ROUND_MULTIPLIER)
+    ) {
       this.setCurrentTime(time);
     }
   }
@@ -271,11 +348,14 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     this._savedCurrentTime = time;
     const isPlaying = this._isPlaying;
     this._isPlayingSubj.next(false);
-    if (this.audioCtxSource && isPlaying ) {
+    if (this.audioCtxSource && isPlaying) {
       this.audioCtxSource.stop();
     }
-    this._progress = this._savedCurrentTime / this._duration * 100;
-    this.timeUpdate.emit({ time: this._savedCurrentTime, progress: this._progress });
+    this._progress = (this._savedCurrentTime / this._duration) * 100;
+    this.timeUpdate.emit({
+      time: this._savedCurrentTime,
+      progress: this._progress,
+    });
     if (isPlaying) {
       this.play();
     }
@@ -287,13 +367,13 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private loadAudio() {
     this._currentTime = 0;
     this._savedCurrentTime = 0;
-    this._regionSubj.next({start: 0, end: 0});
+    this._regionSubj.next({ start: 0, end: 0 });
     this._loaded = false;
-    const audioBuffer$ = this.service.loadTrack(this.srcUrl).pipe(
-      switchMap(buff => this.decode(buff))
-    );
+    const audioBuffer$ = this.service
+      .loadTrack(this.srcUrl)
+      .pipe(switchMap((buff) => this.decode(buff)));
     const now = Date.now();
-    audioBuffer$.subscribe(audioBuffer => {
+    audioBuffer$.subscribe((audioBuffer) => {
       this.trackLoaded.emit(Date.now() - now);
       this.audioBuffer = audioBuffer;
       this._durationSubj.next(this.audioBuffer.duration);
@@ -310,11 +390,12 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    * @param buffer Raw data from mp3
    */
   private decode(buffer: ArrayBuffer) {
-    return new Promise(
-      (resolve, reject) => {
-        this.audioCtx.decodeAudioData(buffer, (decodedBuffer) => { resolve(decodedBuffer) })
-      })
-    }
+    return new Promise((resolve, reject) => {
+      this.audioCtx.decodeAudioData(buffer, (decodedBuffer) => {
+        resolve(decodedBuffer);
+      });
+    });
+  }
 
   /**
    * Set Audio context source used to play audio
@@ -338,15 +419,49 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
 
   private render() {
     const now = Date.now();
+    let markerMap = {};
+    const wrapperRect = this.wrapper.getBoundingClientRect();
+    for (let i = 0; i < this.markers.length; i++) {
+      let markerBar = Math.floor((this.markers[i].time / this._duration)*wrapperRect.width);
+      markerMap[markerBar] = this.markers[i];
+    }
+    console.log(markerMap);
+
     const rawChannel0 = this.audioBuffer.getChannelData(0);
     this.setupCanvas();
     const length = this.canvas.width;
     const filteredRaw = this.service.filterRaw(rawChannel0, length);
     const height = this.canvas.height;
+
     filteredRaw.forEach((item, i) => {
-      this.canvasCtx.fillRect(i + 1, (item * height) / -2, 1, item * height);
+
+      if (markerMap[i] != null) {
+        this.canvasCtx.fillStyle = this.markerColor;
+        this.canvasCtx.fillRect(i + 1, (item * height) / -2, 1, item * height);
+        this.canvasCtx.beginPath();
+        this.canvasCtx.strokeStyle = this.markerColor;
+        this.canvasCtx.moveTo(i - 5, ((item * height) / -2) - 5);
+        this.canvasCtx.lineTo(i + 7, ((item * height) / -2) - 5);
+        this.canvasCtx.lineTo(i + 1, ((item * height) / -2) );
+        this.canvasCtx.closePath();
+        this.canvasCtx.stroke();
+        this.canvasCtx.fill();
+      } else {
+        this.canvasCtx.fillStyle = this.waveColor;
+        this.canvasCtx.fillRect(i + 1, (item * height) / -2, 1, item * height);
+      }
     });
     this.rendered.emit(Date.now() - now);
+  }
+
+  private createMarker(ctx, x, y, h) {
+    ctx.beginPath();
+    ctx.strokeStyle = this.markerColor;
+    ctx.moveTo(x - 5, y + 10);
+    ctx.lineTo(x + 5, y + 10);
+    ctx.lineTo(x, y);
+    ctx.closePath();
+    ctx.stroke();
   }
 
   private setAudioCtxStartTime(tick: number): void {
