@@ -27,7 +27,7 @@ export class NgWaveformService {
     for (let i = 0; i < length; i++) {
       const sample = data.slice(blockSize * i, blockSize * i + blockSize);
       const avg = sample.reduce((prev, curr) => Math.abs(prev) + Math.abs(curr), 0) / sample.length;
-      result.push(avg - ((avg/100)*5));
+      result.push(avg);
     }
     return this.normalize(new Float32Array(result));
   }
