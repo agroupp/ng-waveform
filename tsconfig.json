@@ -19,10 +19,10 @@
       "dom"
     ],
     "paths": {
-      "ng-waveform": [
+      "@ng-waveform/": [
         "dist/ng-waveform"
       ],
-      "ng-waveform/*": [
+      "@ng-waveform/*": [
         "dist/ng-waveform/*"
       ]
     }
