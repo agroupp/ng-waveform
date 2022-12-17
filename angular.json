@@ -14,13 +14,13 @@
           "options": {
             "tsConfig": "projects/ng-waveform/tsconfig.lib.json",
             "project": "projects/ng-waveform/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "projects/ng-waveform/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -36,9 +36,7 @@
               "projects/ng-waveform/tsconfig.lib.json",
               "projects/ng-waveform/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -67,9 +65,7 @@
               "projects/waveform-demo/src/favicon.ico",
               "projects/waveform-demo/src/assets"
             ],
-            "styles": [
-              "projects/waveform-demo/src/styles.scss"
-            ],
+            "styles": ["projects/waveform-demo/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -131,9 +127,7 @@
               "projects/waveform-demo/src/favicon.ico",
               "projects/waveform-demo/src/assets"
             ],
-            "styles": [
-              "projects/waveform-demo/src/styles.scss"
-            ],
+            "styles": ["projects/waveform-demo/src/styles.scss"],
             "scripts": []
           }
         },
@@ -145,9 +139,7 @@
               "projects/waveform-demo/tsconfig.spec.json",
               "projects/waveform-demo/e2e/tsconfig.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {
@@ -163,5 +155,6 @@
           }
         }
       }
-    }}
+    }
+  }
 }
