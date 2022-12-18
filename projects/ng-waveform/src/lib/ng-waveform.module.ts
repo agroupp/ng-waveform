@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DragDropDirective } from './drag-drop.directive';
 
 import { RegionComponent } from './region.component';
+import { NgWaveformService } from './ng-waveform.service';
 
 @NgModule({
   declarations: [NgWaveformComponent, DragDropDirective, RegionComponent],
@@ -12,6 +13,7 @@ import { RegionComponent } from './region.component';
     CommonModule,
     HttpClientModule
   ],
+  providers: [NgWaveformService],
   exports: [NgWaveformComponent]
 })
 export class NgWaveformModule { }
