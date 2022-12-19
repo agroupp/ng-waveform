@@ -1,13 +1,13 @@
 {
-  "name": "ng-waveform",
-  "version": "0.2.1",
-  "author": "Arthur Groupp <arth.groupp@gmail.com> (https://groupp.org)",
+  "name": "@billen/ng-waveform",
+  "version": "0.0.1",
+  "author": "Kulwinder Billen <kbillen92@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "tslib": "^2.0.0"
   },
   "repository": {
     "type" : "git",
-    "url" : "https://github.com/agroupp/ng-audio.git"
+    "url" : "https://github.com/billen/ng-waveform"
   }
 }
