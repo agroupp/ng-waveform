@@ -4,7 +4,7 @@ Library to visualize audio waveform. Built as pure Angular library that doesn't 
 
 ## Quick start
 ```bash
-npm install --save @billen/ng-waveform
+npm install --save ng-waveform
 ```
 
 ```typescript
@@ -28,8 +28,6 @@ onPauseButtonClick() {
     backgroundColor="#d3d3d3"
     regionBackgroundColor="rgba(255, 255, 255, 0.7)"
     regionStartStickColor="#21f032"
-    [markers]="[]"
-    markerColor="#096"
     regionEndStickColor="red"
     regionTextColor="#09417e"
     [withRegionLabels]="true"
@@ -79,8 +77,7 @@ Name | Description
 `regionEndStickColor = 'red'` | Color of region right border stick
 `regionTextColor = '#000'` | Color of region labels text
 `autoplay` | Turn autoplay on load on
-`markers` | Adds a lined marker at those locations to point out a specific time within the track
-`markerColor` | Which color would you like the markers to be. Preferably you want a constrasting one relative to the waveColor property 
+
 
 ### Intrfaces
 ```typescript
@@ -97,18 +94,7 @@ interface IRegionPositions {
 }
 ```
 
-Currently only the time is being used to indicate a marker.
-
-```typescript
-interface Marker {
-  time: number;
-  label: string;
-}
-```
-
 ### Credits
-Thank you very much for the original repository from [Arthur Groupp](https://github.com/agroupp/ng-waveform).
-
 Thank you very much for great inspiration [wavesurfer.js](https://wavesurfer-js.org/) team.
 
 ### Conclusion
