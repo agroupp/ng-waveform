@@ -2,8 +2,8 @@ import {
   Component, OnInit, OnChanges, OnDestroy, AfterViewInit,
   Input, ViewChild, ElementRef, Output, EventEmitter
 } from '@angular/core';
-import { from, interval, BehaviorSubject, of } from 'rxjs';
-import { switchMap, tap, takeWhile, takeUntil } from 'rxjs/operators';
+import { interval, BehaviorSubject, of } from 'rxjs';
+import { switchMap, tap, takeWhile } from 'rxjs/operators';
 
 import { NgWaveformService } from './ng-waveform.service';
 import { IRegionPositions } from './region.component';
@@ -73,12 +73,12 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private audioCtxSource: AudioBufferSourceNode;
 
   // The audioBuffer objects appear differently on Safari vs Chrome hence the use of any
-  private audioBuffer: any; 
+  private audioBuffer: any;
 
   private canvasCtx: CanvasRenderingContext2D;
-  @ViewChild('wrapperEl', {static: false}) private wrapperEl: ElementRef;
-  @ViewChild('canvasEl', {static: false}) private canvasEl: ElementRef;
-  @ViewChild('overlayEl', {static: false}) private overlayEl: ElementRef;
+  @ViewChild('wrapperEl', { static: false }) private wrapperEl: ElementRef;
+  @ViewChild('canvasEl', { static: false }) private canvasEl: ElementRef;
+  @ViewChild('overlayEl', { static: false }) private overlayEl: ElementRef;
   private wrapper: HTMLDivElement;
   private canvas: HTMLCanvasElement;
   private overlay: HTMLDivElement;
@@ -94,7 +94,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private _audioContextStartTime = 0;
   private _progress = 0;
   private _loaded = false;
-  private _regionSubj = new BehaviorSubject<IRegionPositions>({start: 0, end: 0});
+  private _regionSubj = new BehaviorSubject<IRegionPositions>({ start: 0, end: 0 });
   private _region: IRegionPositions;
   private _stopAtRegionEnd = false;
   // tslint:enable: variable-name
@@ -172,11 +172,11 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     }
   }
 
- /**
-   * Gets the time which playback should begin from
-   * Either the start of the region, or 0
-   * @returns start position
-   */
+  /**
+    * Gets the time which playback should begin from
+    * Either the start of the region, or 0
+    * @returns start position
+    */
   private get startPosition(): number {
     return this.useRegion ? this.region.start : 0;
   }
@@ -232,7 +232,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.start) {
       return;
     }
-    this._regionSubj.next({start: time, end: this._region.end});
+    this._regionSubj.next({ start: time, end: this._region.end });
   }
 
   /**
@@ -243,7 +243,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     if (time == null || isNaN(time) || time < 0 || time > this._duration || time === this._region.end) {
       return;
     }
-    this._regionSubj.next({start: this._region.start, end: time});
+    this._regionSubj.next({ start: this._region.start, end: time });
   }
 
   onWrapperClick(event: MouseEvent): void {
@@ -271,7 +271,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
     this._savedCurrentTime = time;
     const isPlaying = this._isPlaying;
     this._isPlayingSubj.next(false);
-    if (this.audioCtxSource && isPlaying ) {
+    if (this.audioCtxSource && isPlaying) {
       this.audioCtxSource.stop();
     }
     this._progress = this._savedCurrentTime / this._duration * 100;
@@ -287,7 +287,7 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
   private loadAudio() {
     this._currentTime = 0;
     this._savedCurrentTime = 0;
-    this._regionSubj.next({start: 0, end: 0});
+    this._regionSubj.next({ start: 0, end: 0 });
     this._loaded = false;
     const audioBuffer$ = this.service.loadTrack(this.srcUrl).pipe(
       switchMap(buff => this.decode(buff))
@@ -311,10 +311,10 @@ export class NgWaveformComponent implements OnInit, OnChanges, OnDestroy, AfterV
    */
   private decode(buffer: ArrayBuffer) {
     return new Promise(
-      (resolve, reject) => {
+      (resolve) => {
         this.audioCtx.decodeAudioData(buffer, (decodedBuffer) => { resolve(decodedBuffer) })
       })
-    }
+  }
 
   /**
    * Set Audio context source used to play audio

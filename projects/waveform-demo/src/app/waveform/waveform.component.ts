@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from 'ng-waveform';
 // import { ITimeUpdateEvent, NgWaveformComponent, IRegionPositions } from '../../../../../dist/ng-waveform';
@@ -20,20 +20,20 @@ export class WaveformDemoComponent implements OnInit {
   currentTime: ITimeUpdateEvent;
   regionPositions: IRegionPositions;
 
-  srcForm: FormGroup;
+  srcForm: UntypedFormGroup;
   isSrcError = false;
   isAudioQueried = false;
 
-  isRegionCtrl = new FormControl(true);
-  regionStartCtrl = new FormControl(0);
-  regionEndCtrl = new FormControl(0);
+  isRegionCtrl = new UntypedFormControl(true);
+  regionStartCtrl = new UntypedFormControl(0);
+  regionEndCtrl = new UntypedFormControl(0);
 
   useRegion = true;
   src: string;
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.srcForm = new FormGroup({src: new FormControl()});
+    this.srcForm = new UntypedFormGroup({src: new UntypedFormControl()});
     this.srcForm.valueChanges.subscribe(() => this.isSrcError = false);
     this.isRegionCtrl.valueChanges.subscribe(value => this.useRegion = value);
     this.regionStartCtrl.valueChanges.subscribe(value => {

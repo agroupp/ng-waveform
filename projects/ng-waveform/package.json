@@ -2,11 +2,14 @@
   "name": "ng-waveform",
   "version": "0.2.0",
   "peerDependencies": {
-    "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14"
+    "@angular/common": "^17.0.5",
+    "@angular/core": "^17.0.5"
   },
   "author": "Arthur Groupp <arth.groupp@gmail.com> (https://groupp.org)",
   "license": "MIT",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "repository": {
     "type" : "git",
     "url" : "https://github.com/agroupp/ng-audio.git"
