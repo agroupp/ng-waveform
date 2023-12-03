@@ -2,8 +2,8 @@
   "name": "ng-waveform",
   "version": "0.2.0",
   "peerDependencies": {
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0"
+    "@angular/common": "^15.2.10",
+    "@angular/core": "^15.2.10"
   },
   "author": "Arthur Groupp <arth.groupp@gmail.com> (https://groupp.org)",
   "license": "MIT",

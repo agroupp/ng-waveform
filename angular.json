@@ -57,7 +57,7 @@
             "main": "projects/waveform-demo/src/main.ts",
             "polyfills": "projects/waveform-demo/src/polyfills.ts",
             "tsConfig": "projects/waveform-demo/tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "projects/waveform-demo/src/favicon.ico",
               "projects/waveform-demo/src/assets"
@@ -78,7 +78,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -96,6 +95,15 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false
             }
           }
         },
@@ -107,6 +115,9 @@
           "configurations": {
             "production": {
               "browserTarget": "waveform-demo:build:production"
+            },
+            "development": {
+              "browserTarget": "hasap:build:development"
             }
           }
         },
