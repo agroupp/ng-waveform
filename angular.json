@@ -25,14 +25,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "projects/ng-waveform/tsconfig.lib.json",
-              "projects/ng-waveform/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "projects/ng-waveform/src/**/*.ts",
+              "projects/ng-waveform/src/**/*.html"
             ]
           }
         }
@@ -145,15 +142,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "projects/waveform-demo/tsconfig.app.json",
-              "projects/waveform-demo/tsconfig.spec.json",
-              "projects/waveform-demo/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "projects/waveform-demo/src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         },
