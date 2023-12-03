@@ -55,7 +55,7 @@
             "outputPath": "dist/waveform-demo",
             "index": "projects/waveform-demo/src/index.html",
             "main": "projects/waveform-demo/src/main.ts",
-            "polyfills": "projects/waveform-demo/src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/waveform-demo/tsconfig.app.json",
             "aot": true,
             "assets": [
@@ -110,28 +110,28 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "waveform-demo:build"
+            "buildTarget": "waveform-demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "waveform-demo:build:production"
+              "buildTarget": "waveform-demo:build:production"
             },
             "development": {
-              "browserTarget": "hasap:build:development"
+              "buildTarget": "hasap:build:development"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "waveform-demo:build"
+            "buildTarget": "waveform-demo:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "projects/waveform-demo/src/test.ts",
-            "polyfills": "projects/waveform-demo/src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/waveform-demo/tsconfig.spec.json",
             "karmaConfig": "projects/waveform-demo/karma.conf.js",
             "assets": [

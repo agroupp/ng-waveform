@@ -3,9 +3,9 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/app",
     "types": [],
-    "paths": {
-      "ng-waveform": ["dist/ng-waveform"]
-    }
+    // "paths": {
+    //   "ng-waveform": ["dist/ng-waveform"]
+    // }
   },
   "files": [
     "src/main.ts",
